@@ -7,3 +7,4 @@ app = FastAPI()
 app.include_router(mongo_router)
 #app.include_router(auth_router)
 app.include_router(health_router)
+
