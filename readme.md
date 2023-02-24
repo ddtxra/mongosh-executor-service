@@ -11,6 +11,10 @@ This is a sample project that shows how to use FastAPI with MongoDB and authenti
 
 ## Getting Started
 
+```
+uvicorn main:app --host 0.0.0.0 --port 8000  
+```
+
 ### Prerequisites
 
 - Python 3.8 or later
