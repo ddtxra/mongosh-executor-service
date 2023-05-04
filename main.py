@@ -10,6 +10,8 @@ logger.setLevel(logging.INFO)
 
 app = FastAPI()
 
+db_uri = "mongodb+srv://danit:1234567890@cluster0.c8hfq.mongodb.net/sample_airbnb"
+
 @app.get("/execute-query")
 def execute_mongo_query(script: str):
 
@@ -25,39 +27,6 @@ def execute_mongo_query(script: str):
     async def stream_response():
         while True:
             line = process.stdout.readline().decode().strip()
-            if not line:
-                break
-            yield line.encode()
-
-    return StreamingResponse(stream_response(), media_type="application/json")
-
-
-db_uri = "mongodb+srv://danit:1234567890@cluster0.c8hfq.mongodb.net/sample_airbnb"
-# should be a pool of connection
-mongosh = subprocess.Popen(['mongosh --quiet --norc ' + db_uri], shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-
-@app.get("/execute-query-from-pool")
-async def run_query(script: str):
-    print("Boum")
-    # Write user query to mongosh process stdin
-    # open text file in read mode"
-    text_file = open("queries/" + script + ".js", "r")
-    data = text_file.read().replace("\n", " ").replace("\r", "")
-    text_file.close()
-
-    execute_file = open("execute-query.js", "r")
-    data_e = execute_file.read().replace("\n", " ").replace("\r", "") + "\n"
-    data = data + data_e
-
-    print(data)
-    execute_file.close()
-
-    mongosh.stdin.write(data.encode())
-    mongosh.stdin.flush()
-
-    async def stream_response():
-        while True:
-            line = mongosh.stdout.readline().decode().strip()
             if not line:
                 break
             yield line.encode()
