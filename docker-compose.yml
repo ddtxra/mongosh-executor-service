@@ -7,6 +7,8 @@ services:
       - 27017:27017
     volumes:
       - mongo_data:/data/db
+    networks:
+      - mynetwork
   web:
     build:
       context: .
@@ -15,5 +17,11 @@ services:
       - 8088:8000
     depends_on:
       - mongo
+    networks:
+      - mynetwork
 volumes:
   mongo_data:
+
+networks:
+  mynetwork:
+    driver: bridge
