@@ -1,6 +1,8 @@
 import subprocess
-from fastapi import FastAPI
+from fastapi import FastAPI, Response, HTTPException
 import logging
+import json
+import asyncio
 from datetime import datetime
 from fastapi.responses import StreamingResponse
 
@@ -10,11 +12,10 @@ logger.setLevel(logging.INFO)
 
 app = FastAPI()
 
-db_uri = "mongodb+srv://danit:1234567890@cluster0.c8hfq.mongodb.net/sample_airbnb"
+db_uri = "mongodb://mongo:27017/demo"
 
 @app.get("/execute-query")
-def execute_mongo_query(script: str):
-
+async def execute_mongo_query(script: str):
     print("Current Time =", datetime.now().strftime("%H:%M:%S"))
 
     # Build the command to execute
@@ -30,5 +31,11 @@ def execute_mongo_query(script: str):
             if not line:
                 break
             yield line.encode()
+
+            lineErr = process.stderr.readline()
+            if lineErr:
+                error_msg = lineErr.decode().strip()
+                error_obj = {"errorMsg": error_msg}
+                raise HTTPException(status_code=422, detail=json.dumps(error_obj))
 
     return StreamingResponse(stream_response(), media_type="application/json")
