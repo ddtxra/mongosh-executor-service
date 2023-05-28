@@ -9,9 +9,6 @@ RUN apt-get update && apt-get install -y curl gnupg
 
 # Copy the project files to the working directory
 COPY requirements.txt .
-COPY execute-query.js .
-
-COPY queries ./queries
 
 # Install project dependencies
 RUN pip install --no-cache-dir -r requirements.txt
@@ -28,9 +25,14 @@ RUN apt-get update && apt-get install -y curl && \
 RUN pip install gunicorn
 
 COPY main.py .
+COPY queries ./queries
+COPY execute-query.js .
 
 # Expose the port on which the FastAPI server will run
 EXPOSE 8000
 
 # Command to start the FastAPI server
-CMD ["gunicorn", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "main:app", "--bind", "0.0.0.0:8000"]
+#CMD ["gunicorn", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "main:app", "--bind", "0.0.0.0:8000"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+
+

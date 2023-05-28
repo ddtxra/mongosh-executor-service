@@ -27,15 +27,15 @@ async def execute_mongo_query(script: str):
 
     async def stream_response():
         while True:
+            lineerr = process.stderr.readline()
+            if lineerr:
+                error_msg = lineerr.decode().strip()
+                error_obj = {"errorMsg": error_msg}
+                raise HTTPException(status_code=422, detail=json.dumps(error_obj))
+
             line = process.stdout.readline().decode().strip()
             if not line:
                 break
             yield line.encode()
-
-            lineErr = process.stderr.readline()
-            if lineErr:
-                error_msg = lineErr.decode().strip()
-                error_obj = {"errorMsg": error_msg}
-                raise HTTPException(status_code=422, detail=json.dumps(error_obj))
 
     return StreamingResponse(stream_response(), media_type="application/json")

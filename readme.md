@@ -1,4 +1,11 @@
+### Using docker
+
+```
+curl http://localhost:8088/execute-query?script=get_patients
+```
+
 ### Installing
+
 
 To install the python required dependencies, run:
 pip install -r requirements.txt
