@@ -8,7 +8,6 @@ res.forEach(function(r){
     }else {
         firstElem = false;
     }
-
-    print(JSON.stringify(r, null, 2))
+    print(JSON.stringify(r))
 });
 print("]")

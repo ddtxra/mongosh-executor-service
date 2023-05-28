@@ -17,7 +17,7 @@ function execute(parameters) {
       }
     },
     {
-      $limit: 5
+      $limit: 100
     }
   ]);
 
