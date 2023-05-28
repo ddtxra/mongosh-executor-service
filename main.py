@@ -26,18 +26,28 @@ async def execute_mongo_query(script: str):
     try:
         process = subprocess.Popen(mongo_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     except:
-        logger.error("process failed")
-
+        logger.error("EXCEPTION: process failed")
 
     async def stream_response():
+        error_msgs = []  # List to store multiple error messages
+
         while True:
             line = process.stdout.readline().decode().strip()
-            logger.info("Info: " + line)
+            logger.info("Iiiiinfo: " + line)
             lineerr = process.stderr.readline().decode().strip()
-            logger.error("Error: " + lineerr)
+            logger.error("Errrrrrror: " + lineerr)
 
             if not line:
                 break
             yield line.encode()
+
+            # Check for error messages and add them to the list
+            if lineerr:
+                error_msgs.append(lineerr)
+
+        # If there are any error messages, raise HTTPException
+        if error_msgs:
+            error_msg = {"errors": error_msgs}
+            raise HTTPException(status_code=422, detail=error_msg)
 
     return StreamingResponse(stream_response(), media_type="application/json")

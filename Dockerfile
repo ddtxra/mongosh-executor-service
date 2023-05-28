@@ -27,8 +27,6 @@ RUN if [ "$(uname -m)" = "x86_64" ]; then \
 RUN pip install gunicorn
 
 COPY main.py .
-COPY queries ./queries
-COPY execute-query.js .
 
 # Expose the port on which the FastAPI server will run
 EXPOSE 8000
