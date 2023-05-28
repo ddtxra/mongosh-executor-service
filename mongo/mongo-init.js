@@ -1,3 +1,7 @@
+db = db.getSiblingDB('demo');
+
+db.createCollection('patients');
+
 db.patients.insertMany([
   {
     dateOfBirth: new Date('1990-01-01'),
