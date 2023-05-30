@@ -19,5 +19,5 @@ uvicorn main:app --host 0.0.0.0 --port 8000
 
 ### Executing the scripts throught the API
 
-* http://localhost:8000/execute-query?script=get_5_reviews
-* http://localhost:8000/execute-query?script=get_reviews_moderate_policy
+* http://localhost:8088/execute-query?script=patients&limit=20&match={"sex":"male"}
+* 

@@ -1,4 +1,4 @@
-var res = execute({})
+var res = execute(parameters, limit)
 var firstElem = true;
 
 print("[")
@@ -8,6 +8,6 @@ res.forEach(function(r){
     }else {
         firstElem = false;
     }
-    print(JSON.stringify(r))
+    print(JSON.stringify(r, null, 2))
 });
 print("]")

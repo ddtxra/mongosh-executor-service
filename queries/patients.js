@@ -1,5 +1,5 @@
 //gets 5 adults patients
-function execute(parameters) {
+function execute(match, limit) {
   var currentDate = new Date();
   var currentYear = currentDate.getFullYear();
   var adultThreshold = new Date(currentYear - 18, currentDate.getMonth(), currentDate.getDate());
@@ -17,11 +17,13 @@ function execute(parameters) {
       }
     },
     {
-      $limit: 100
+      $match: match
+    },
+    {
+      $limit: limit
     }
   ]);
 
   return result;
-
 
 }
