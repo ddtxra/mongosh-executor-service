@@ -60,7 +60,7 @@ from patient
 where id in ('pat_1', 'pat_2', 'pat_3', 'pat_4')
 ```
 
-------- TENSION ARTERIEL --------------------------------------------------
+#### TENSIONS ARTERIELS
 
 Valeurs de tension arteriel elevée (limité a 10 résultats)
 * http://46.101.116.183:8088/view/arterial_pressure?systolic_value_gte=140&limit=10
