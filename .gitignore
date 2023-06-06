@@ -1,2 +1,4 @@
+tmp/
+tmp_*
 mongo/mongo_data
 .idea

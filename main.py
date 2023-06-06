@@ -1,12 +1,10 @@
 import subprocess
-import uuid
-from typing import Optional
-from fastapi import FastAPI, HTTPException
+import os
+from fastapi import FastAPI, HTTPException, Request
 import logging
 from datetime import datetime
 from fastapi.responses import StreamingResponse
 import asyncio
-import json
 
 logger = logging.getLogger(__name__)
 logging.basicConfig()
@@ -16,23 +14,29 @@ app = FastAPI()
 
 db_uri = "mongodb://mongo:27017/demo"
 
-@app.get("/execute-query")
-async def execute_mongo_query(script: str, match: Optional[str] = None, limit: int = 1000):
+@app.get("/view/{script}")
+async def execute_mongo_query(script: str, request: Request):
     print("Current Time =", datetime.now().strftime("%H:%M:%S"))
+    request_query_params = request.query_params
+    query_params = dict(request_query_params)
+
+    directory = "tmp"  # Replace with the desired directory path
+
+    if not os.path.exists(directory):
+        os.makedirs(directory)
 
     # Generate a random name for the file with .js extension
-    file_name = str(uuid.uuid4()) + ".js"
+    file_name = directory + "/tmp_" + str(datetime.now().strftime("%y%m%d%H%M%S.%f")) + ".js"
+
+    # Accessing other parameters dynamically
 
     # Create the file with the random name
     with open(file_name, "w") as file:
-        if match:
-            file.write("var parameters = JSON.parse('" + match + "');\n")
-            file.write("var limit = " + str(limit) + ";\n")
+        if len(query_params) > 0:
+            file.write("var parameters = JSON.parse(\'" + str(query_params).replace("\'", "\"") + "\');\n")
         else:
             # Handle the case when match is not set
             file.write("var parameters = {};\n")  # Write an empty JSON object
-            file.write("var limit = " + str(limit) + ";\n")
-
 
     # Build the command to execute
     mongo_cmd = f"mongosh --quiet --norc " + db_uri + " queries/" + script + ".js  " + file_name + " execute-query.js"
@@ -45,6 +49,8 @@ async def execute_mongo_query(script: str, match: Optional[str] = None, limit: i
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
+
+
     except:
         logger.error("EXCEPTION: process failed")
 
@@ -62,6 +68,14 @@ async def execute_mongo_query(script: str, match: Optional[str] = None, limit: i
                 break
             yield lineerr
 
+    def delete_temp_file(f):
+        try:
+            os.remove(f)
+            logger.info("Temporary file deleted: " + f)
+        except OSError as e:
+            logger.error("Error deleting temporary file: " + f)
+            logger.error(e)
+
     # Start capturing errors in the background
     error_msgs = []
 
@@ -70,6 +84,8 @@ async def execute_mongo_query(script: str, match: Optional[str] = None, limit: i
     except:
         logger.error("EXCEPTION: error occurred while streaming response")
         process.terminate()
+    #finally:
+        #delete_temp_file(file_name)
 
     # Check for error messages from stderr
     async for lineerr in capture_errors():

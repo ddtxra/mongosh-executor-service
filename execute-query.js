@@ -1,4 +1,4 @@
-var res = execute(parameters, limit)
+var res = execute(parameters)
 var firstElem = true;
 
 print("[")

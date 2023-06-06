@@ -9,7 +9,7 @@ var batchSize = 1000;
 var totalRecords = 150000;
 
 function generateYesOrNo() {
-    return (Math.random() <= 0.05) ? "yes" : "No";
+    return (Math.random() <= 0.05) ? "yes" : "no";
 }
 
 function getRandomDate(start, end) {
@@ -30,17 +30,14 @@ function generateRandomPatientValues(patient_id, key, startDate, endDate, count)
             _id: patient_id + "_" + i,
             patient_id: patient_id,
             values: {
-                "systolic": getRandomFloat(100, 140),
-                "diastolic": getRandomFloat(60, 100)
+                "systolic": getRandomFloat(100, 160),
+                "diastolic": getRandomFloat(40, 100)
             },
             datetime: randomDate,
             key: key
         });
     }
-
-    db.patient_values.insertMany(values);
-    print(count + " " + key + " inserted")
-
+    return values;
 }
 
 
@@ -48,22 +45,27 @@ for (var batchStart = 0; batchStart < totalRecords; batchStart += batchSize) {
     var batchEnd = Math.min(batchStart + batchSize, totalRecords);
 
     var batchInsert = [];
+    var values = [];
     for (var i = batchStart; i < batchEnd; i++) {
         var randomGender = genders[Math.floor(Math.random() * genders.length)];
         var randomYear = Math.floor(Math.random() * (maxYear - minYear + 1)) + minYear;
         var randomMonth = Math.floor(Math.random() * 12) + 1;
-        var randomDay = Math.floor(Math.random() * 28) + 1; // Assuming all months have 28 days for simplicity
+        var randomDay = Math.floor(Math.random() * 30) + 1; // Assuming all months have 30 days for simplicity
+
+        var patient_id = "pat_" + (batchStart + i);
 
         batchInsert.push({
-            _id: batchStart + i,
+            _id: patient_id,
             general_consent: generateYesOrNo(),
             dateOfBirth: new Date(randomYear, randomMonth - 1, randomDay),
             sex: randomGender
         });
-    }
-    print(batchStart + " patients inserted")
-    generateRandomPatientValues(batchStart, "pv.ta", new Date("2020-01-01"), new Date("2021-01-01"), 1000);
 
+        values = values.concat(generateRandomPatientValues(patient_id, "pv.ta", new Date("2020-01-01"), new Date("2021-01-01"), 3));
+
+    }
+
+    db.patient_values.insertMany(values);
     db.patients.insertMany(batchInsert);
 }
 
