@@ -1,18 +1,11 @@
-### Using docker
+### Mongo API 
 
+Using docker
 ```
-curl http://localhost:8088/execute-query?script=get_patients
+docker-compose up -d
 ```
 
-### Installing
-
-
-To install the python required dependencies, run:
-pip install -r requirements.txt
-
-Install the mongosh binary in your path
-
-## Getting Started
+Using python (make sure you have a mongo instance running and change your connection in mongo.py accordingly)
 ```
 uvicorn main:app --host 0.0.0.0 --port 8000  
 ```
@@ -22,7 +15,7 @@ uvicorn main:app --host 0.0.0.0 --port 8000
 #### PATIENTS
 
 Patients qui ont signés le general consent (5% sur 150K), réponse limité à 10 records
-* http://46.101.116.183:8088/view/patient?limit=10&general_consent=yes
+* http://localhost:8088/view/patient?limit=10&general_consent=yes
 
 ```sql
 select *
@@ -32,7 +25,7 @@ limit 10
 ```
 
 Patients avec 18 ans qui ont signés le general consent
-* http://46.101.116.183:8088/view/patient?age=18&general_consent=yes
+* http://localhost:8088/view/patient?age=18&general_consent=yes
 
 ```sql
 select *
@@ -42,7 +35,7 @@ and age = 18
 ```
 
 Patients adulte > 18 ans qui ont signés le general consent 
-* http://46.101.116.183:8088/view/patient?age_gte=18&general_consent=yes
+* http://localhost:8088/view/patient?age_gte=18&general_consent=yes
 
 ```sql
 select *
@@ -52,7 +45,7 @@ and age > 18
 ```
 
 Patients identifiés par leurs ID
-* http://46.101.116.183:8088/view/patient?id_in=pat_1,pat_2,pat_3,pat_4
+* http://localhost:8088/view/patient?id_in=pat_1,pat_2,pat_3,pat_4
 
 ```sql
 select *
@@ -63,7 +56,7 @@ where id in ('pat_1', 'pat_2', 'pat_3', 'pat_4')
 #### TENSIONS ARTERIELS
 
 Valeurs de tension arteriel elevée (limité a 10 résultats)
-* http://46.101.116.183:8088/view/arterial_pressure?systolic_value_gte=140&limit=10
+* http://localhost:8088/view/arterial_pressure?systolic_value_gte=140&limit=10
 
 ```sql
 select *
@@ -73,7 +66,7 @@ limit 10
 ```
 
 Valeurs de tensions arteriels pour 4 patients
-* http://46.101.116.183:8088/view/arterial_pressure?patient_id_in=pat_1,pat_2,pat_3,pat_4,pat_5
+* http://localhost:8088/view/arterial_pressure?patient_id_in=pat_1,pat_2,pat_3,pat_4,pat_5
 
 ```sql
 select *
@@ -83,7 +76,7 @@ where patient_id in ('pat_1', 'pat_2', 'pat_3', 'pat_4', 'pat_5')
 
 
 Valeurs de tensions arteriels pour 4 patients avec une tension arteriel normal
-* http://46.101.116.183:8088/view/arterial_pressure?patient_id_in=pat_1,pat_2,pat_3,pat_4,pat_5&systolic_value_gte=100
+* http://localhost:8088/view/arterial_pressure?patient_id_in=pat_1,pat_2,pat_3,pat_4,pat_5&systolic_value_gte=100
 
 ```sql
 select *
