@@ -15,10 +15,18 @@ app = FastAPI()
 db_uri = "mongodb://mongo:27017/demo"
 
 @app.get("/view/{script}")
-async def execute_mongo_query(script: str, request: Request):
+async def execute_mongo_query_get(script: str, request: Request):
+    return await execute_mongo_query(script, request, request.query_params)
+
+@app.post("/view/{script}")
+async def execute_mongo_query_post(script: str, request: Request):
+    return await execute_mongo_query(script, request, await request.json())
+
+async def execute_mongo_query(script: str, request: Request, params):
     print("Current Time =", datetime.now().strftime("%H:%M:%S"))
-    request_query_params = request.query_params
-    query_params = dict(request_query_params)
+    query_params = dict(params)
+
+    print("params: " + str(query_params))
 
     directory = "tmp"  # Replace with the desired directory path
 

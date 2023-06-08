@@ -33,7 +33,7 @@ function execute(parameters) {
       }else if(param.endsWith("_lt")){
           match[param.replace("_lt", "")] = {$lt: parameters[param]}
       }else if(param.endsWith("_in")){
-          match[param.replace("_in", "")] = {$in: parameters[param].split(",")} //TODO not take for string
+          match[param.replace("_in", "")] = {$in: (Array.isArray(parameters[param]) ? parameters[param] : parameters[param].split(","))}
       }else {
           match[param] = parameters[param]
       }

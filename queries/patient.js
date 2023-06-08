@@ -8,13 +8,21 @@ function execute(match, limit) {
     {
       $project: {
         id: "$_id",
-        sex: 1,
-        age: { $subtract: [currentYear, { $year: "$dateOfBirth" }] },
-        dateOfBirth: 1,
-        general_consent: 1
+        _id: 1,
+        last_name: 1,
+        first_name: 1,
+        age: { $subtract: [currentYear, { $year: "$birth_datetime" }] },
+        email: 1,
+        canton: 1,
+        country: 1,
+        origin: 1,
+        general_consent: 1,
+        birth_datetime: 1,
+        sex: 1
       }
     }
   ];
+
 
   var match = {};
   Object.keys(parameters).filter(p => p != "limit").forEach(function(param){
@@ -29,11 +37,13 @@ function execute(match, limit) {
       }else if(param == "age_lt"){
           match[param.replace("_lt", "")] = {$lt: Number(parameters[param])}
       }else if(param == "id_in"){
-          match[param.replace("_in", "")] = {$in: parameters[param].split(",")}
+          match[param.replace("_in", "")] = {$in: (Array.isArray(parameters[param]) ? parameters[param] : parameters[param].split(","))}
       }else {
           match[param] = parameters[param]
       }
   })
+
+  //print(match)
 
   if(Object.keys(match).length > 0){
        aggQuery.push({$match: match})
