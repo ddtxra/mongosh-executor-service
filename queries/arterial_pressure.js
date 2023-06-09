@@ -7,6 +7,7 @@ function execute(parameters) {
     {
       $project: {
         id: "$_id",
+        eds_id: "$eds_id",
         patient_id: 1,
         systolic_value: "$values.systolic",
         diastolic_value: "$values.diastolic",
