@@ -53,7 +53,7 @@ curl -X POST -H "Content-Type: application/json" -d '{"age_gte": 18, "general_co
 select *
 from patient
 where general_consent = 'yes'
-and age > 18
+and age >= 18
 ```
 
 Patients identifiés par leurs ID
